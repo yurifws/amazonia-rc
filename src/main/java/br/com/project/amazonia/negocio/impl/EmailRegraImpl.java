@@ -12,12 +12,12 @@ public class EmailRegraImpl implements IRegra {
 	}
 
 	private void enviarEmail(Venda pVenda) {
+		String mensagem = "NÃ£o foi possÃ­vel enviar email!";
 		if (pVenda.getCliente() != null 
-				&& !pVenda.getCliente().getEmail().isEmpty())
-			Util.LOGGER.info(
-					String.format("Foi enviado email para: %s", pVenda.getCliente().getEmail()));
-		else
-			Util.LOGGER.info("Não foi possível enviar email!");
+				&& !pVenda.getCliente().getEmail().isEmpty()){
+			mensagem = String.format("Foi enviado email para: %s", pVenda.getCliente().getEmail());
+		}
+		Util.LOGGER.info(mensagem);	
 	}
 
 }

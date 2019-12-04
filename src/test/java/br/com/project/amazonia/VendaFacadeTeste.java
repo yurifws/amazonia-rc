@@ -1,5 +1,7 @@
 package br.com.project.amazonia;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,7 +18,7 @@ import br.com.project.amazonia.model.Venda;
 public class VendaFacadeTeste {
 
 	@Test
-	public void testComCupomComPromocao() {
+	public void testAplicacaoRegras() {
 		VendaFacade facade = new VendaFacade();
 
 		List<Produto> produtos = new ArrayList<>(0);
@@ -27,38 +29,63 @@ public class VendaFacadeTeste {
 				.build();
 		
 		Cupom cupom = new Cupom.Builder()
-				.porcentagem(5)
+				.porcentagem(50)
 				.build();
 		
-		Produto produto = new Produto.Builder()
+		Produto produto = new Produto.Builder() // imposto | sem frete | sem desconto promocao
 				.nome("produto 1")
 				.quantidade(1)
 				.midiaDigital(true)
 				.promocao(false)
-				.pesoKg(0.2)
+				.pesoKg(0.1)
 				.tipoProduto(TipoProdutoEnum.OUTROS)
-				.valor(150)
+				.valor(100)
 				.build();
 		produtos.add(produto);
 		
-		Produto produto2 = new Produto.Builder()
+		Produto produto2 = new Produto.Builder() // sem imposto | com frete | sem desconto promocao
 				.nome("produto 2")
 				.quantidade(1)
 				.valorDesconto(0)
 				.valorImposto(0)
 				.midiaDigital(false)
-				.promocao(true)
-				.pesoKg(0.1)
+				.promocao(false)
+				.pesoKg(0.3)
 				.tipoProduto(TipoProdutoEnum.JORNAL)
-				.valor(150)
+				.valor(100)
 				.build();
 		produtos.add(produto2);
+		
+		Produto produto3 = new Produto.Builder() // sem imposto | sem frete | com desconto promocao
+				.nome("produto 3")
+				.quantidade(1)
+				.valorDesconto(0)
+				.valorImposto(0)
+				.midiaDigital(true)
+				.promocao(true)
+				.pesoKg(0.1)
+				.tipoProduto(TipoProdutoEnum.LIVRO)
+				.valor(100)
+				.build();
+		produtos.add(produto3);
+		
+		Produto produto4 = new Produto.Builder() // sem imposto | sem frete | sem desconto promocao | quantidade > 1
+				.nome("produto 4")
+				.quantidade(10)
+				.valorDesconto(0)
+				.valorImposto(0)
+				.midiaDigital(true)
+				.promocao(false)
+				.pesoKg(0.1)
+				.tipoProduto(TipoProdutoEnum.LIVRO)
+				.valor(100)
+				.build();
+		produtos.add(produto4);
 		
 		Frete frete = new Frete.Builder()
 				.cepOrigem("04094-050")
 				.valor(0)
 				.build();
-
 		
 		Venda venda = new Venda.Builder()
 				.cliente(cliente)
@@ -72,6 +99,13 @@ public class VendaFacadeTeste {
 				.build();
 		
 		facade.vender(venda);
+		
+		assertTrue(venda.getValorTotal() == 1300);
+		assertTrue(venda.getValorDescontoTotal() == 50);
+		assertTrue(venda.getValorImpostoTotal() == 10);
+		assertTrue(venda.getValorAPagar() == 1291);
+		assertTrue(venda.getFrete().getValor() == 31);
+		
 	}
 	
 	

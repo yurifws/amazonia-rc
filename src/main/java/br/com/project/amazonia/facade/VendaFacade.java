@@ -24,8 +24,8 @@ public class VendaFacade {
 		freteRegra.aplicarRegra(pVenda);
 		vendaRegra.aplicarRegra(pVenda);
 		emailRegra.aplicarRegra(pVenda);
-		
-		Util.LOGGER.info(pVenda.toString());
+		String resultado = pVenda.toString();
+		Util.LOGGER.info(resultado);
 	}
 	
 
